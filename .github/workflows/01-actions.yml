@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repo containg the workflow
         uses: actions/checkout@v2
     # Task 2
-      - name: Using GitHub Script 1 (Comment on new issue)
+      - name: Using GitHub Script 1 - Comment on new issue
         uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
@@ -21,13 +21,20 @@ jobs:
               repo: context.repo.repo,
               body: "🎉 You've created this issue comment using GitHub Script!!!"
               })
+      # task 3. Note that task 2/3 can be merge to by just add the script only content below to
+      # the next line aft the end of the script in task 2
+      - name: Using GitHub Script 2 - Comment on new issue
+        uses: actions/github-script@0.8.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |              
               github.projects.createCard({
               column_id: {{columnID}},
               content_id: context.payload.issue.id,
               content_type: "Issue"
               });
-    # Task 3
-      - name: Comment on new issue using a file and adds it only if the issue has a label 'bug'
+    # Task 4
+      - name: Comment on new issue using a file and adds it only if the issue has a label bug
         if: contains(github.event.issue.labels.*.name, 'bug')
         uses: actions/github-script@0.8.0
         with:
