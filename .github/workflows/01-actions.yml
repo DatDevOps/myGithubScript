@@ -51,12 +51,21 @@ jobs:
         uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
+          ## Not working perhaps bcs I have not associated project
+          # script: |
+          #     github.projects.createCard({
+          #     column_id: {{columnID}},
+          #     content_id: context.payload.issue.id,
+          #     content_type: "Issue"
+          #     });
+
           script: |
-              github.projects.createCard({
-              column_id: {{columnID}},
-              content_id: context.payload.issue.id,
-              content_type: "Issue"
-              });
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "🎉 Hello 3!!!"
+            })              
               
       # Task 5 using file to add comments to issues and if condition 
       # this task runs if the issue has a label called 'wontfix'
