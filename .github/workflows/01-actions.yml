@@ -1,7 +1,7 @@
 name: Learning GitHub Script
 on:
   issues:
-    types: [opened, push]
+    types: [opened]
 jobs:
   comment:
     runs-on: ubuntu-latest
