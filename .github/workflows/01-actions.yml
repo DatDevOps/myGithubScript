@@ -42,3 +42,33 @@ jobs:
               repo: context.repo.repo,
               body: "🎉 Hello 2!!!"
             })
+      #task 4 combining scripts, and if condition
+      # this task runs if the issue has a label called 'bug'
+      - name: Combining scripts and if condition
+        uses: actions/github-script@0.8.0
+        if: contains(github.event.issue.labels.*.name, 'bug')
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+              github.projects.createCard({
+              column_id: {{columnID}},
+              content_id: context.payload.issue.id,
+              content_type: "Issue"
+              });
+              
+      # Task 5 using file to add comments to issues and if condition 
+      # this task runs if the issue has a label called 'wontfix'
+      - name: Using file to add comments to issues
+        if: contains(github.event.issue.labels.*.name, 'wontfix')
+        uses: actions/github-script@0.8.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+             const fs = require('fs')
+             const issueBody = fs.readFileSync(".github/ISSUE_RESPONSES/comment.md", "utf8")
+             github.issues.createComment({
+             issue_number: context.issue.number,
+             owner: context.repo.owner,
+             repo: context.repo.repo,
+             body: issueBody
+             })             
