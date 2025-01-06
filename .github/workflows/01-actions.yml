@@ -4,6 +4,9 @@ on:
   issues:
     types: [opened]
 
+permissions:
+  contents: write   # This is required to create/push the new git tag    
+
 jobs:
   comment:
     runs-on: ubuntu-latest
