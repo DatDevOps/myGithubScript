@@ -27,7 +27,8 @@ jobs:
               content_type: "Issue"
               });
     # Task 3
-      - name: Comment on new issue using a file
+      - name: Comment on new issue using a file and adds it only if the issue has a label 'bug'
+        if: contains(github.event.issue.labels.*.name, 'bug')
         uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
