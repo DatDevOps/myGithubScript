@@ -9,7 +9,12 @@ permissions: write-all
 jobs:
   comment:
     runs-on: ubuntu-latest
-    steps:    
+    steps: 
+    # task 1
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      #task 2 
       - uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
