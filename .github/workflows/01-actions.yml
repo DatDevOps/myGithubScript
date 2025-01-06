@@ -27,7 +27,8 @@ jobs:
               body: "🎉 You've created this issue comment using GitHub Script!!!"
             })
       #task 3 combining scripts
-      - uses: actions/github-script@0.8.0
+      - name: Combining Scripts
+        uses: actions/github-script@0.8.0
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
