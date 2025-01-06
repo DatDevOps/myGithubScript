@@ -59,6 +59,7 @@ jobs:
           #     content_type: "Issue"
           #     });
 
+          # remove this  below line, 'script: |', if the you figure out the above
           script: |
             github.issues.createComment({
               issue_number: context.issue.number,
