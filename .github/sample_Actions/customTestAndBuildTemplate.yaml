@@ -1,0 +1,81 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  pull_request_review:
+    types: [submitted]    
+
+jobs:
+  test-1:
+    runs-on: ${{ matrix.os }} # runs on each OS below better that just specifying just one
+
+    strategy:
+      matrix:
+        # Six tests, one for each operating system paired with each version of Node.
+        os: [ubuntu-latest, windows-latest] # different OS to run on
+        node-version: [18.x, 20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm install, and test
+      run: |
+        npm install
+        npm test
+      env:
+        CI: true
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: npm install and build webpack
+        run: |
+          npm install
+          npm run build
+      # actions/upload-artifact@main action there's a path: attribute. The value of this attribute is the path to store the artifact. 
+      # Here, we specify public/ to upload everything to a directory. If we just wanted to upload a single file, we use something like public/mytext.txt.    
+      - uses: actions/upload-artifact@main
+        with:
+          name: webpack artifacts
+          path: public/
+  # To download the artifact for testing, the build must complete successfully and upload the artifact. In the following code, we specify that the test job depends on the build job.
+  # In the following workflow snippet, we download the artifact. Now the test job can use the artifact for testing.
+  test-2:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@main
+      with:
+        name: webpack artifacts
+        path: public
+
+ # So far, we described starting the workflow with GitHub events such as push or pull-request. We could also run a workflow on a schedule, or on some event outside of GitHub.
+ # Sometimes, we want to run the workflow only after a person performs an action. For example, we might only want to run a workflow after a reviewer approves the pull request. For this scenario, we can trigger on pull-request-review.
+ # Another action we could take is to add a label to the pull request. In this case, we use the pullreminders/label-when-approved-action action.
+ # To run your workflow when a pull request has been approved, you can trigger your workflow with the submitted type of pull_request_review event, then check the review state with the github.event.review.state property.
+  addLabel:
+    runs-on: ubuntu-latest
+    steps:
+         - name: Label when approved
+           if: github.event.review.state == 'approved'
+           uses: pullreminders/label-when-approved-action@main
+           env:
+             APPROVALS: "1"
+             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             ADD_LABEL: "approved"
+
+# Notice the block called env:. This block is where you set the environment variables for this action. 
+# For example, you can set the number of approvers needed. Here, it's one. The secrets.GITHUB_TOKEN authentication variable is required because the action must make changes to your repository by adding a label. 
+# Finally, you supply the name of the label to add.             
