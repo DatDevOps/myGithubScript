@@ -75,6 +75,7 @@ jobs:
              APPROVALS: "1"
              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
              ADD_LABEL: "approved"
+         - run: echo "This PR was approved"
 
 # Notice the block called env:. This block is where you set the environment variables for this action. 
 # For example, you can set the number of approvers needed. Here, it's one. The secrets.GITHUB_TOKEN authentication variable is required because the action must make changes to your repository by adding a label. 
